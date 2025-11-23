@@ -1,0 +1,59 @@
+<!DOCTYPE html><html>
+<head>
+  <meta charset="UTF-8">
+  <title>Mines Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center p-6 min-h-screen">
+  <h1 class="text-3xl font-bold mb-4">Mines</h1>  <div class="mb-4 w-full max-w-xs">
+    <label class="block mb-1 text-lg">Bet Amount (₹)</label>
+    <input id="bet" type="number" value="10" class="w-full p-2 rounded bg-gray-800 border border-gray-700" />
+  </div>  <div class="grid grid-cols-5 gap-2 mb-6" id="board"></div>  <p id="status" class="text-xl font-bold mt-4"></p>  <script>
+    const board = document.getElementById('board');
+    const status = document.getElementById('status');
+
+    let mines = [];
+    let revealed = 0;
+    let bet = () => Number(document.getElementById('bet').value);
+
+    function resetGame() {
+      board.innerHTML = "";
+      mines = [];
+      revealed = 0;
+      status.textContent = "";
+
+      // generate 5 mines
+      while (mines.length < 5) {
+        let pos = Math.floor(Math.random() * 25);
+        if (!mines.includes(pos)) mines.push(pos);
+      }
+
+      for (let i = 0; i < 25; i++) {
+        const btn = document.createElement('button');
+        btn.className = "w-12 h-12 bg-gray-700 rounded text-xl font-bold";
+        btn.onclick = () => reveal(i, btn);
+        board.appendChild(btn);
+      }
+    }
+
+    function reveal(i, btn) {
+      if (mines.includes(i)) {
+        btn.classList.add('bg-red-600');
+        status.textContent = "💥 Boom! You lost ₹" + bet();
+        lockBoard();
+      } else {
+        btn.classList.add('bg-green-600');
+        btn.disabled = true;
+        revealed++;
+        status.textContent = "Safe tiles: " + revealed;
+      }
+    }
+
+    function lockBoard() {
+      const all = board.querySelectorAll('button');
+      all.forEach(b => b.disabled = true);
+    }
+
+    resetGame();
+  </script></body>
+</html>
